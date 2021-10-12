@@ -58,6 +58,7 @@ def initEloCalculator(playerData, k = 20, g = 1, homefield = 0):
 def main():
     playerData = getPlayerData()
     eloCalculator = initEloCalculator(playerData)
+    playerPeakElo = eloCalculator.getRatingDict()
 
 
 if __name__ == '__main__':
