@@ -46,10 +46,19 @@ def getPlayerData(filename = 'matches/tennis_atp/atp_players.csv'):
             playerDict[row[0]] = name
     return playerDict
 
+# Description: This function initializes the Elo object located in elosports
+#              and adds all of the players in playerData to it.
+# Output:      Returns an Elo object.
+def initEloCalculator(playerData, k = 20, g = 1, homefield = 0):
+    tmp = Elo(k = k, g = g, homefield = homefield)
+    for key in playerData:
+        tmp.addPlayer(key)
+    return tmp
 
 def main():
     playerData = getPlayerData()
-    print(playerData)
+    eloCalculator = initEloCalculator(playerData)
+
 
 if __name__ == '__main__':
     main()
