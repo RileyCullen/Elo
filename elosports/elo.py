@@ -21,6 +21,9 @@ class Elo:
 	def expectResult(self, p1, p2):
 		exp = (p2-p1)/400.0
 		return 1/((10.0**(exp))+1)
+	
+	def getRating(self,name):
+		return self.ratingDict[name]
 		
 		
 test = Elo(k = 20)
