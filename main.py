@@ -55,11 +55,60 @@ def initEloCalculator(playerData, k = 20, g = 1, homefield = 0):
         tmp.addPlayer(key)
     return tmp
 
+def printPeakEloData(idList, peakEloDict, nameDict):
+    for playerID in idList:
+        print(nameDict[playerID][1] + ': ' + str(peakEloDict[playerID]))
+
+def findTopNRatings(peakEloDict, n = 10):
+    helper = sorted(peakEloDict, key = lambda i: (i))
+    reversedHelper = helper[::-1]
+    returnList = []
+    for i in range(n):
+        returnList.append(reversedHelper[i])
+    return returnList
+
 def main():
+    # initalize local variables
     playerData = getPlayerData()
     eloCalculator = initEloCalculator(playerData)
     playerPeakElo = eloCalculator.getRatingDict()
 
+    # set a start and end year, then open all of the files in that range
+    startYear = 1968
+    endYear = 2015
+    print('\n')
+    for i in range((endYear - startYear) + 1):
+        filePath = 'matches/tennis_atp/atp_matches_' + str(startYear + i) + '.csv'   
+        # open the file
+        with open(filePath) as matchesCSV:
+            print("Reading " + filePath)
+            readCSV = csv.reader(matchesCSV)
+            # set important indexes 
+            # 0 - tourney_id
+            # 7 - winner_id
+            # 15 - loser_id
+            col_index = [0, 7, 15] 
+            next(readCSV)
+            for row in readCSV:
+                # apply ELO operations in here
+                match_data = []
+                for j in col_index:
+                    match_data.append(row[j])
+
+                # calculate expected scores then updated ELO ratings
+                eloCalculator.gameOver(match_data[1], match_data[2], True)
+                
+                # update peak ELO ratings
+                winnerUpdatedRating = eloCalculator.getRating(match_data[1])
+                loserUpdatedRating = eloCalculator.getRating(match_data[2])
+ 
+                if (winnerUpdatedRating > playerPeakElo[match_data[1]]):
+                    playerPeakElo[match_data[1]] = winnerUpdatedRating
+        
+                if (loserUpdatedRating > playerPeakElo[match_data[2]]):
+                    playerPeakElo[match_data[2]] = loserUpdatedRating
+    # topTenPlayers = findTopNRatings(playerPeakElo, 10)
+    # printPeakEloData(topTenPlayers, playerPeakElo, playerData)
 
 if __name__ == '__main__':
     main()
